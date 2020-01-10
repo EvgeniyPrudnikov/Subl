@@ -6,10 +6,6 @@
 	"gravity_sidebar_header": true,
 	"gravity_tab_height_short": true,
 	"highlight_line": true,
-	"ignored_packages":
-	[
-		"Vintage"
-	],
 	"show_encoding": true,
 	"tab_size": 4,
 	"theme": "Reverse Gravity.sublime-theme",
