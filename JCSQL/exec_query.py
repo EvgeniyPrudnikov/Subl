@@ -177,7 +177,8 @@ class ExecThread(threading.Thread):
 
     def run(self):
         try:
-
+            os.environ['PYTHONIOENCODING'] = 'utf-8'
+            os.environ['NLS_LANG'] = 'AMERICAN_AMERICA.AL32UTF8'
             CREATE_NO_WINDOW = 0x08000000 if os.name == 'nt' else 0  # hide cmd window
             self.popen = subprocess.Popen(self.cmd, stdout=subprocess.PIPE, stdin=(None if self.cmd[0] == 'sqlplus' else subprocess.PIPE), creationflags=CREATE_NO_WINDOW)
             check_thread = threading.Thread(target=self.check_view_proc, args=(self.view, self.popen, ))

@@ -110,6 +110,9 @@ def read_input(msg_q):
 
 
 def main():
+
+    os.environ['PYTHONIOENCODING'] = 'utf-8'
+
     env = sys.argv[1]
     conn_str = sys.argv[2]
     query_file_name = sys.argv[3]
