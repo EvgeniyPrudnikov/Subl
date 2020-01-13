@@ -245,5 +245,7 @@ class LoadDataEvent(sublime_plugin.ViewEventListener):
         sel = self.view.sel()[0]
         size = self.view.size()
         reg = sublime.Region(size - 5, size - 2)
+        if self.view.substr(reg) != '...':
+            return
         if reg.contains(sel) and self.view.is_read_only():
             self.view.window().run_command("exec_query", {"view_id": self.view.id()})
