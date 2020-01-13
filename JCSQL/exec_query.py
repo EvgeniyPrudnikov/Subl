@@ -196,10 +196,13 @@ class ExecThread(threading.Thread):
             flash_start_icon()
             os.remove(self.tmp_file_name)
             upd_name = self.view.name().replace('- active', '- done')
-            self.view.set_name(upd_name)
+            if upd_name:
+                self.view.set_name(upd_name)
             if self.view.id() in VIEW_THREADS:
+                # if upd_name:
                 self.view.run_command('done_or_expired')
                 del VIEW_THREADS[self.view.id()]
+
 
     def append_data(self, data):
         self.view.set_read_only(False)
