@@ -5,6 +5,34 @@ Now available:
  - Oracle DB
  - Cloudera Impala
 
+## Install:
+----
+Assume, that Sublime text editor has already installed.
+
+1) Install Python 3.6+ (https://www.python.org/)
+2) Install numpy, pyodbc
+```
+pip install numpy pyodbc
+```
+3) Download sqlplus + oracle instant client (https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
+4) Install and configure cloudera ODBC driver (https://www.cloudera.com -> Downloads -> Database Drivers)
+5) Add sqlplus, python to Path env varaible
+
+Add Connection:
+
+ - [ctrl+shift+p] -> JCQL:Add new connection:
+```
+{
+      "connection_name": "CONNECTION_NAME_HERE"
+    , "environment": "ENVIRONMENT_HERE(oracle/impala)"
+    , "connection_string": "CONNECTION_STRING_HERE"
+}
+```
+
+Use it to execute a code
+ - [ctrl+shift+enter] -> {conenction name}
+----
+
 ### Supported commands :
  - Add connection
  - Modify connection
