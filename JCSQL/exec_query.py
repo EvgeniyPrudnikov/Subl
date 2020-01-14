@@ -83,6 +83,7 @@ class ExecQueryCommand(sublime_plugin.WindowCommand):
         env = conn['environment']
         tool, tmp_file_name, fetch = prepare_query_file(self.window.active_view(), env, qtype) or (None, None, None)
         if tool is None:
+            print('Connection environment {0} is not supported. Allowed values are: ("impala", "oracle"). exit.'.format(env))
             return
 
         output_view_name = '{0}_{1}'.format(conn['connection_name'], env)

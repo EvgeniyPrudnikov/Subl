@@ -29,7 +29,6 @@ def print_all(output):
 def cvs_print_result(output):
     writer = csv.writer(sys.stdout, dialect='excel', delimiter=',', lineterminator='\n', quoting=csv.QUOTE_ALL, escapechar='\\')
     writer.writerows(output)
-    sys.stdout.flush()
 
 
 def pretty_print_result(output):
@@ -64,17 +63,15 @@ def pretty_print_result(output):
 def connect_to_db(conn_str, env):
     db = None
     for _ in range(50):  # 50 attempts
-        try:
-            if env == 'oracle':
-                db = cx.connect(conn_str, encoding='utf-8')
-            else:
-                db = pyodbc.connect(conn_str, autocommit=True, timeout=0)
-            if db:
-                break
-        except Exception as e:
-            raise Exception(e)
+        if env == 'oracle':
+            db = cx.connect(conn_str, encoding='utf-8')
+        else:
+            db = pyodbc.connect(conn_str, autocommit=True, timeout=0)
+        if db:
+            break
     if not db:
-        raise Exception('\nCant connect in 50 attempts. Exit 1\n')
+        print('\nCant connect in 50 attempts. Exit 1\n', flush=True)
+        os._exit(1)
     PRINT_HEADER.append('\n[{0}] Connected to {1}\n'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), env))
     return db
 

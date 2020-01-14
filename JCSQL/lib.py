@@ -81,6 +81,8 @@ def prepare_query_file(view, env, qtype):
         tool, cl_query, fetch = prepare_oracle(sel_text, qtype, is_query_dml)
     elif env == 'impala':
         tool, cl_query, fetch = prepare_impala(sel_text, qtype, is_query_dml)
+    else:
+        return
 
     tmp_file_name = 'tmp_{tool}_dt_{dt}.sql'.format(tool=tool, dt=datetime.now().strftime("%Y_%m_%d_%H_%M_%S.%f"))
     tmp_file_path = os.path.join(os.path.dirname(__file__), 'tmp', tmp_file_name)
