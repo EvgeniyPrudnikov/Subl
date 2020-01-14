@@ -132,14 +132,17 @@ def main():
             PRINT_HEADER.append(query + '\n')
             start = time.time()
             cur.execute(query)
-            end = time.time()
-            PRINT_FOOTER.append('\nElapsed {0} s\n'.format(str(timedelta(seconds=end - start))))
+
             if len_q > 1:
                 output = []
 
             is_fetched_all_rows = fetch_data(cur, output, fetch_num, is_fetched_all_rows, with_header=True)
 
+            end = time.time()
+            PRINT_FOOTER.append('\nElapsed {0} s\n'.format(str(timedelta(seconds=end - start))))
+
             print_all(output)
+
             if i < len_q - 1:
                 PRINT_HEADER.pop()
                 PRINT_FOOTER.pop()
