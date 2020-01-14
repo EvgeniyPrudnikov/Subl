@@ -6,7 +6,7 @@ Now available:
  - Cloudera Impala
 
 ## Install:
-----
+
 Assume, that Sublime text editor has already installed.
 
 1) Install Python 3.6+ (https://www.python.org/)
@@ -17,6 +17,9 @@ pip install numpy pyodbc
 3) Download sqlplus + oracle instant client (https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
 4) Install and configure cloudera ODBC driver (https://www.cloudera.com -> Downloads -> Database Drivers)
 5) Add sqlplus, python to Path env varaible
+
+6) Copy folder JCSQL to (for win) c:~\AppData\Roaming\Sublime Text 3\Packages\
+7) Relaunch Sublime text
 
 Add Connection:
 
