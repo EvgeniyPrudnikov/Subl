@@ -181,16 +181,19 @@ def main():
             else:
                 break
 
-    except Exception as e:
-        if len(e.args) == 1:
-            e_msg = '\n{0}\n'.format(e)
-        else:
-            e_msg =  '\n{0}\n'.format(e.args[1])
+    except cx.Error as oracle_dbe:
+        e_msg = '\n{0}\n'.format(oracle_dbe)
         print(*PRINT_HEADER, sep='\n', flush=True)
         print(e_msg)
+    except pyodbc.Error as pyodbc_error:
+        e_msg = '\n{0}\n'.format(pyodbc_error.args[1])
+        print(*PRINT_HEADER, sep='\n', flush=True)
+        print(e_msg)
+    except Exception:
+        print(traceback.format_exc())
+    finally:
         cur.close()
         db.close()
-        traceback.print_exc()
         sys.stdout.flush()
         os._exit(1)
 
