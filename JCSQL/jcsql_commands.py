@@ -2,7 +2,6 @@ import os
 import sublime
 import sublime_plugin
 from .connection_store import *
-import time
 
 
 settings = None

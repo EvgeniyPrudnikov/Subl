@@ -1,4 +1,4 @@
-import os
+
 import sublime
 import sublime_plugin
 
@@ -16,7 +16,7 @@ class SaveToCsvCommand(sublime_plugin.WindowCommand):
         if self.window.active_group() != 1:
             return
         view = self.window.active_view()
-        self.window.run_command("exec_query", {"view_id": view.id(), "fetch": -1, "qtype":'csv'})
+        self.window.run_command("exec_query", {"view_id": view.id(), "fetch": -1, "qtype": 'csv'})
 
 
 class EraseCommand(sublime_plugin.TextCommand):

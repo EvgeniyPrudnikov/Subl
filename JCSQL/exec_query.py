@@ -9,7 +9,7 @@ from .lib import *
 from .jcsql_help_commands import *
 import traceback
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # win specific
 # --------------------------------------------------------------------------
 kernel32 = None
@@ -102,7 +102,6 @@ class ExecQueryCommand(sublime_plugin.WindowCommand):
 
         VIEW_THREADS[output_view.id()] = self.exec_thread
 
-
     def load_csv(self, vid):
         try:
             if vid in VIEW_THREADS:
@@ -117,10 +116,9 @@ class ExecQueryCommand(sublime_plugin.WindowCommand):
 
             popen.stdin.write('csv==-1\n'.encode('utf-8'))
             popen.stdin.flush()
-        except Exception as e:
+        except Exception:
             traceback.print_exc()
             return
-
 
     def load_data(self, vid, fetch):
         try:
@@ -137,7 +135,7 @@ class ExecQueryCommand(sublime_plugin.WindowCommand):
             fetch_num = settings.get('fetch_num') if fetch is None else fetch
             popen.stdin.write('load=={0}\n'.format(fetch_num).encode('utf-8'))
             popen.stdin.flush()
-        except Exception as e:
+        except Exception:
             traceback.print_exc()
             return
 
@@ -191,7 +189,7 @@ class ExecThread(threading.Thread):
 
             self.popen.stdout.close()
 
-        except Exception as e:
+        except Exception:
             traceback.print_exc()
         finally:
             flash_start_icon()
@@ -203,7 +201,6 @@ class ExecThread(threading.Thread):
                 # if upd_name:
                 self.view.run_command('done_or_expired')
                 del VIEW_THREADS[self.view.id()]
-
 
     def append_data(self, data):
         self.view.set_read_only(False)
@@ -244,7 +241,7 @@ class LoadDataEvent(sublime_plugin.ViewEventListener):
         else:
             return
         rc = view_thread.popen.poll()
-        if not rc is None:
+        if rc:
             return
 
         sel = self.view.sel()[0]

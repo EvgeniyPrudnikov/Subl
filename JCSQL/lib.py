@@ -1,5 +1,5 @@
 # Oracle/IMPALA utilities functions
-import json
+
 import os
 import csv
 import traceback
@@ -8,7 +8,7 @@ from decimal import Decimal
 try:
     import wx
     import wx.dataview
-except:
+except Exception:
     pass
 
 RAND_MAX = 999999999999999
@@ -90,7 +90,7 @@ def prepare_query_file(view, env, qtype):
     try:
         with open(tmp_file_path, 'wb+') as tf:
             tf.write(cl_query.encode('utf-8'))
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
 
     return tool, tmp_file_path, fetch

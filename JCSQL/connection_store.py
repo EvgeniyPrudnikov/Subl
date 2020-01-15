@@ -1,7 +1,6 @@
 import json
 import os
 import sublime
-import sublime_plugin
 from collections import OrderedDict
 
 settings = sublime.load_settings('JCSQL.sublime-settings')
@@ -63,7 +62,7 @@ class ConnectionStore(object):
         if len(conn_json) > 0:
             try:
                 j = json.loads(conn_json, object_pairs_hook=OrderedDict)
-            except Exception as e:
+            except Exception:
                 sublime.error_message('Incorrect Connection JSON. Please try again.')
         else:
             sublime.error_message('Empty connection.')
@@ -87,7 +86,7 @@ class ConnectionStore(object):
             conn_name = conn_list[conn_name_idx]
             try:
                 del self._connection_store[conn_name]
-            except Exception as e:
+            except Exception:
                 sublime.error_message('Empty connection.')
                 return
             sublime.message_dialog('Connection {0} has been deleted.'.format(conn_name))
