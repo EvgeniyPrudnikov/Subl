@@ -29,6 +29,7 @@ def print_all(output):
 def cvs_print_result(output):
     writer = csv.writer(sys.stdout, dialect='excel', delimiter=',', lineterminator='\n', quoting=csv.QUOTE_ALL, escapechar='\\')
     writer.writerows(output)
+    sys.stdout.flush()
 
 
 def pretty_print_result(output):
