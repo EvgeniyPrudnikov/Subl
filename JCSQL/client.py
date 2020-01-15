@@ -45,8 +45,8 @@ def pretty_print_result(output):
 
     def proc_line_end(val, index):
         l = str(val).split('\n')
-        sm = np.sum(max_col_length[:index]) + 3*index + 2
-        res = [(' '*(sm-2) + '. ' if i > 0 else '') + str(value).replace('None', 'NULL') + ' ' * (max_col_length[index] - len(value)) + (' .' if i != len(l)-1 else '') for i, value in enumerate(l)]
+        sm = np.sum(max_col_length[:index]) + 3 * index + 2
+        res = [(' ' * (sm - 2) + '. ' if i > 0 else '') + str(value).replace('None', 'NULL') + ' ' * (max_col_length[index] - len(value)) + (' .' if i != len(l) - 1 else '') for i, value in enumerate(l)]
         return '\n'.join(res)
 
     # print result
@@ -112,14 +112,14 @@ def main():
     env = sys.argv[1]
     conn_str = sys.argv[2]
     query_file_name = sys.argv[3]
-    qtype = sys.argv[4]
+    # qtype = sys.argv[4]
     fetch_num = int(sys.argv[5])
     query = ''
     sys.path.append(os.path.dirname(query_file_name))
 
     try:
         with open(query_file_name, 'rb') as f:
-            query = f.read().decode('utf-8').replace('\r\n','\n')
+            query = f.read().decode('utf-8').replace('\r\n', '\n')
 
         db = connect_to_db(conn_str, env)
         cur = db.cursor()
