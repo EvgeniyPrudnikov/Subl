@@ -45,7 +45,6 @@ def pretty_print_result(output):
 
     def proc_line_end(val, index):
         l = str(val).split('\n')
-        mcl = np.amax(to_str_repl_len(l), axis=0)
         sm = np.sum(max_col_length[:index]) + 3*index + 2
         res = [(' '*(sm-2) + '. ' if i > 0 else '') + str(value).replace('None', 'NULL') + ' ' * (max_col_length[index] - len(value)) + (' .' if i != len(l)-1 else '') for i, value in enumerate(l)]
         return '\n'.join(res)
