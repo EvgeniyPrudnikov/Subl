@@ -34,7 +34,7 @@ def cvs_print_result(output):
 
 def pretty_print_result(output):
     def check_line_end(val):
-        v = str(val)
+        v = str(val).replace('\r', '')
         if '\n' in v:
             return max(map(len, v.split('\n')))
         else:
@@ -45,15 +45,15 @@ def pretty_print_result(output):
     max_col_length = np.amax(to_str_repl_len(l_output), axis=0)
 
     def proc_line_end(val, index):
-        l = str(val).split('\n')
+        blob_list = str(val).replace('\r', '').split('\n')
         sm = np.sum(max_col_length[:index]) + 3 * index + 2
-        res = [(' ' * (sm - 2) + '. ' if i > 0 else '') + str(value).replace('None', 'NULL') + ' ' * (max_col_length[index] - len(value)) + (' .' if i != len(l) - 1 else '') for i, value in enumerate(l)]
+        res = [(' ' * (sm - 2) + '. ' if i > 0 else '') + str(value).replace('None', 'NULL') + ' ' * (max_col_length[index] - len(value)) + (' .' if i != len(blob_list) - 1 else '') for i, value in enumerate(blob_list)]
         return '\n'.join(res)
 
     # print result
     print('+' + ''.join(['-' * x + '--+' for x in max_col_length]))
     for row_index, row in enumerate(l_output):
-        print('|' + ''.join([' ' + ((str(value).replace('None', 'NULL') + ' ' * (max_col_length[index] - len(str(value)))) if '\n' not in str(value) else proc_line_end(value, index)) + ' |' for index, value in enumerate(row)]))
+        print('|' + ''.join([' ' + ((str(value).replace('None', 'NULL').replace('\r', '') + ' ' * (max_col_length[index] - len(str(value).replace('\r', '')))) if '\n' not in str(value) else proc_line_end(value, index)) + ' |' for index, value in enumerate(row)]))
         if row_index == 0 or row_index == len(l_output) - 1:
             print('+' + ''.join(['-' * x + '--+' for x in max_col_length]))
 
