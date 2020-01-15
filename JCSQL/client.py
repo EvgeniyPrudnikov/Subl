@@ -125,7 +125,7 @@ def main():
         db = connect_to_db(conn_str, env)
         cur = db.cursor()
         output = []
-        queries = list(filter(None, query.split(';\n')))
+        queries = list(filter(None, query.split(';')))
         len_q = len(queries)
         for i, query in enumerate(queries):
             is_fetched_all_rows = False
