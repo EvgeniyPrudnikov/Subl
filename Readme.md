@@ -12,7 +12,7 @@ Assume, that Sublime text editor has already installed.
 1) Install Python 3.6+ (https://www.python.org/)
 2) Install numpy, pyodbc
 ```
-pip install numpy pyodbc
+pip install numpy pyodbc cx_Oracle
 ```
 3) Download sqlplus + oracle instant client (https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
 4) Install and configure cloudera ODBC driver (https://www.cloudera.com -> Downloads -> Database Drivers)
