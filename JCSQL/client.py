@@ -171,6 +171,8 @@ def main():
                     is_fetched_all_rows = fetch_data(cur, output, int(cmd[1]), is_fetched_all_rows)
                     if is_fetched_all_rows:
                         PRINT_FOOTER[-1] = 'Fetched all rows.'
+                else:
+                    PRINT_FOOTER[-1] = 'Fetched all rows.'
                 print_all(output)
                 timeout += 10
             elif cmd[0] == 'csv':
