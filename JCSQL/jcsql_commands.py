@@ -51,6 +51,8 @@ class RunCodeInCommand(sublime_plugin.WindowCommand):
                 return
 
             def on_con(conn_idx):
+                if conn_idx == -1:
+                    return
                 conn = conn_store.get_connection(conn_list[conn_idx])
                 self.window.run_command("exec_query", {"conn": conn, "qtype": qtype})
                 conn_store.upd_last_used_conn(conn)

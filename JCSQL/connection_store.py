@@ -3,8 +3,6 @@ import os
 import sublime
 from collections import OrderedDict
 
-settings = sublime.load_settings('JCSQL.sublime-settings')
-
 
 class ConnectionStore(object):
 
@@ -36,12 +34,17 @@ class ConnectionStore(object):
     def upd_last_used_conn(self, conn):
         self._last_used_connection = conn
 
+    def _on_cancel(self):
+        return
+
     def add_connection(self):
         w = sublime.active_window()
-        w.show_input_panel('Add New Connection: ', self._template, self._on_add_modify_conn, None, None)
+        w.show_input_panel('Add New Connection: ', self._template, self._on_add_modify_conn, None, self._on_cancel)
 
     def modify_connection(self):
         def _on_modify_conn(conn_name_idx):
+            if conn_name_idx == -1:
+                return
             conn = self.get_connection(conn_list[conn_name_idx])
 
             w = sublime.active_window()
@@ -49,7 +52,7 @@ class ConnectionStore(object):
                                self._template.replace("ENVIRONMENT_HERE(oracle/impala)", conn['environment']).replace('CONNECTION_NAME_HERE', conn['connection_name']).replace('CONNECTION_STRING_HERE', conn['connection_string']),
                                self._on_add_modify_conn,
                                None,
-                               None)
+                               self._on_cancel)
 
         conn_list = self.get_all_connections()
         if len(conn_list) == 0:
@@ -83,6 +86,8 @@ class ConnectionStore(object):
 
     def delete_connection(self):
         def _on_del(conn_name_idx):
+            if conn_name_idx == -1:
+                return
             conn_name = conn_list[conn_name_idx]
             try:
                 del self._connection_store[conn_name]
