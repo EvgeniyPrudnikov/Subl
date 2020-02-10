@@ -197,12 +197,7 @@ def main():
         cur.close()
         db.close()
         sys.stdout.flush()
-        os._exit(1)
-
-    sys.stdout.flush()
-    cur.close()
-    db.close()
-    os._exit(0)
+        os._exit(0)
 
 
 if __name__ == '__main__':
