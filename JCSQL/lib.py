@@ -63,8 +63,9 @@ def prepare_impala(query, qtype, is_query_dml):
     tool = 'python'
     if qtype == 'explain':
         query = 'EXPLAIN\n {0}'.format(query)
-
-    fetch = -1 if not is_query_dml else None
+        fetch = -1
+    else:
+        fetch = -1 if not is_query_dml else None
 
     return tool, query, fetch
 
