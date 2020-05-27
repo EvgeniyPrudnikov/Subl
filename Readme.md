@@ -4,7 +4,7 @@
 Now available:
  - Oracle DB
  - Cloudera Impala
-
+ - Cloudera HIVE
 ## Install:
 
 Assume, that Sublime text editor has already installed.
