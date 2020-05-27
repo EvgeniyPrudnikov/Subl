@@ -1,4 +1,4 @@
-# Oracle/IMPALA utilities functions
+# Oracle/IMPALA/HIVE utilities functions
 
 import os
 import csv
@@ -69,6 +69,15 @@ def prepare_impala(query, qtype, is_query_dml):
 
     return tool, query, fetch
 
+def prepare_hive(query, qtype, is_query_dml):
+    tool = 'python'
+    if qtype == 'explain':
+        query = 'EXPLAIN\n {0}'.format(query)
+        fetch = -1
+    else:
+        fetch = -1 if not is_query_dml else None
+
+    return tool, query, fetch
 
 def prepare_query_file(view, env, qtype):
     sel_text = get_text(view)
@@ -82,6 +91,8 @@ def prepare_query_file(view, env, qtype):
         tool, cl_query, fetch = prepare_oracle(sel_text, qtype, is_query_dml)
     elif env == 'impala':
         tool, cl_query, fetch = prepare_impala(sel_text, qtype, is_query_dml)
+    elif env == 'hive':
+        tool, cl_query, fetch = prepare_hive(sel_text, qtype, is_query_dml)
     else:
         return
 

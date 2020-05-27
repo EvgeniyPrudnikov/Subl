@@ -11,7 +11,7 @@ class ConnectionStore(object):
     _template = """
 {
       "connection_name": "CONNECTION_NAME_HERE"
-    , "environment": "ENVIRONMENT_HERE(oracle/impala)"
+    , "environment": "ENVIRONMENT_HERE(oracle/impala/hive)"
     , "connection_string": "CONNECTION_STRING_HERE"
 }
 """
@@ -49,7 +49,7 @@ class ConnectionStore(object):
 
             w = sublime.active_window()
             w.show_input_panel('Modify Connection: ',
-                               self._template.replace("ENVIRONMENT_HERE(oracle/impala)", conn['environment']).replace('CONNECTION_NAME_HERE', conn['connection_name']).replace('CONNECTION_STRING_HERE', conn['connection_string']),
+                               self._template.replace("ENVIRONMENT_HERE(oracle/impala/hive)", conn['environment']).replace('CONNECTION_NAME_HERE', conn['connection_name']).replace('CONNECTION_STRING_HERE', conn['connection_string']),
                                self._on_add_modify_conn,
                                None,
                                self._on_cancel)

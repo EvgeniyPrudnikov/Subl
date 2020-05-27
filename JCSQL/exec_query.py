@@ -83,7 +83,7 @@ class ExecQueryCommand(sublime_plugin.WindowCommand):
         env = conn['environment']
         tool, tmp_file_name, fetch = prepare_query_file(self.window.active_view(), env, qtype) or (None, None, None)
         if tool is None:
-            print('Connection environment {0} is not supported. Allowed values are: ("impala", "oracle"). exit.'.format(env))
+            print('Connection environment {0} is not supported. Allowed values are: ("impala", "hive", "oracle"). exit.'.format(env))
             return
 
         output_view_name = '{0}_{1}'.format(conn['connection_name'], env)
@@ -208,7 +208,7 @@ class ExecThread(threading.Thread):
         self.view.set_read_only(True)
 
         errors_start_text = ['ORA-', 'SP2-', 'PL/SQL:', 'ERROR', 'PLS-']
-        odbc_err_text = '[Cloudera][ImpalaODBC]'
+        odbc_err_text = '[Cloudera]'
         if any(map(data.startswith, errors_start_text)) or odbc_err_text in data:
             self.view.sel().add(self.view.line(sublime.Region(self.view.size() - len(data), self.view.size())))
             try:
