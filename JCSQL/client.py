@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import time
 from datetime import timedelta
@@ -101,6 +102,16 @@ def fetch_data(cur, res, fetch_num, is_fetched_all_rows, with_header=False):
     return False
 
 
+def split_data(data):
+    list_data = list(data)
+    replace_re = re.compile(r"['\"](.*?(;).*?)['\"]", re.DOTALL | re.MULTILINE)
+    for m in replace_re.finditer(data):
+        pos = m.start(2)
+        list_data[pos] = '[replace_me]'
+    new_data = ''.join(list_data).split(';')
+    return map(lambda x: x.replace('[replace_me]', ';'), new_data)
+
+
 def read_input(msg_q):
     while True:
         msg_q.append(sys.stdin.readline())
@@ -125,7 +136,7 @@ def main():
         db = connect_to_db(conn_str, env)
         cur = db.cursor()
         output = []
-        queries = list(filter(None, query.split(';')))
+        queries = list(filter(None, split_data(query)))
         len_q = len(queries)
         for i, query in enumerate(queries):
             is_fetched_all_rows = False
