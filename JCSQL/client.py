@@ -104,10 +104,21 @@ def fetch_data(cur, res, fetch_num, is_fetched_all_rows, with_header=False):
 
 def split_data(data):
     list_data = list(data)
-    replace_re = re.compile(r"['\"](.*?(;).*?)['\"]", re.DOTALL | re.MULTILINE)
-    for m in replace_re.finditer(data):
-        pos = m.start(2)
-        list_data[pos] = '[replace_me]'
+
+    pos = []
+    quote_started = False
+    for i, ch in enumerate(list_data):
+        if (ch == "'" or ch == '"') and not quote_started:
+            quote_started = True
+            continue
+        if ch == ';' and quote_started:
+            pos.append(i)
+        if (ch == "'" or ch == '"') and quote_started:
+            quote_started = False
+            continue
+
+    for m in pos:
+        list_data[m] = '[replace_me]'
     new_data = ''.join(list_data).split(';')
     return map(lambda x: x.replace('[replace_me]', ';'), new_data)
 
