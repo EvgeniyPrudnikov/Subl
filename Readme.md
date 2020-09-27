@@ -4,22 +4,33 @@
 Now available:
  - Oracle DB
  - Cloudera Impala
- - Cloudera HIVE
+ - Cloudera HIVE via JDBC
 ## Install:
 
-Assume, that Sublime text editor has already installed.
+0) Install Sublime tetxt
+1) Copy folder JCSQL to (for win) c:~\AppData\Roaming\Sublime Text 3\Packages\
+2) Run Sublime text
 
-1) Install Python 3.6+ (https://www.python.org/)
-2) Install numpy, pyodbc
+For use with Oracle and Impala:
+
+3) Install Python 3.6+ (https://www.python.org/)
+4) Install numpy, pyodbc, + cx_Oracle (for oracle)
 ```
 pip install numpy pyodbc cx_Oracle
 ```
-3) Download sqlplus + oracle instant client (https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
-4) Install and configure cloudera ODBC driver (https://www.cloudera.com -> Downloads -> Database Drivers)
-5) Add sqlplus, python to Path env varaible
+5) Download sqlplus + oracle instant client (https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
+6) Install and configure cloudera ODBC driver (https://www.cloudera.com -> Downloads -> Database Drivers)
+7) Add sqlplus, python to Path env varaible
 
-6) Copy folder JCSQL to (for win) c:~\AppData\Roaming\Sublime Text 3\Packages\
-7) Relaunch Sublime text
+For use with hive jdbc: 
+
+8) Install Java 8 (https://www.java.com/en/download/)
+9) Add JAVA_HOME to Path env varaible with path to installed java
+10) Download cloudera hive jdbc driver (https://www.cloudera.com -> Downloads -> Database Drivers)
+11) Add path to driver to c:~\AppData\Roaming\Sublime Text 3\Packages\User\JCSQL.sublime-settings in jvm_classpath
+12) If use kerberos add kerberos conf file path to JCSQL.sublime-settings in krb_conf_file_path
+
+13) Relaunch Sublime text
 
 Add Connection:
 
@@ -178,3 +189,33 @@ Elapsed 0:00:00.057832 s
 
 Fetched all rows.
 ```
+
+Hive Explain:
+```
+[2020-09-27 13:45:23] Connected to hive
+
+EXPLAIN
+ select row_number() over() as rn , id , snippet_channelid from e_prudnikov.youtube_api_v3_videos limit 100
+
++-------------------------------------------------------------------------------------------------------+
+| Explain                                                                                               |
++-------------------------------------------------------------------------------------------------------+
+| STAGE DEPENDENCIES:                                                                                   |
+|   Stage-1 is a root stage                                                                             |
+|   Stage-0 depends on stages: Stage-1                                                                  |
+|                                                                                                       |
+| STAGE PLANS:                                                                                          |
+|   Stage: Stage-1                                                                                      |
+|     Map Reduce                                                                                        |
+|       Map Operator Tree:                                                                              |
+|           TableScan                                                                                   |
+|             alias: youtube_api_v3_videos                                                              |
+|             Statistics: Num rows: 3334 Data size: 666994 Basic stats: COMPLETE Column stats: NONE     |
+|             Reduce Output Operator                                                                    |
+|               key expressions: 0 (type: int), 0 (type: int)                                           |
+|               sort order: ++                                                                          |
+|               Map-reduce partition columns: 0 (type: int)                                             |
+|               Statistics: Num rows: 3334 Data size: 666994 Basic stats: COMPLETE Column stats: NONE   |
+... 
+```
+
