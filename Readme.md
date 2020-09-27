@@ -11,7 +11,8 @@ Now available:
 1) Copy folder JCSQL to (for win) c:~\AppData\Roaming\Sublime Text 3\Packages\
 2) Run Sublime text
 
-For use with Oracle and Impala
+For use with Oracle and Impala:
+
 3) Install Python 3.6+ (https://www.python.org/)
 4) Install numpy, pyodbc, + cx_Oracle (for oracle)
 ```
@@ -22,6 +23,7 @@ pip install numpy pyodbc cx_Oracle
 7) Add sqlplus, python to Path env varaible
 
 For use with hive jdbc: 
+
 8) Install Java 8 (https://www.java.com/en/download/)
 9) Add sqlplus, python to Path env varaible
 10) Download cloudera hive jdbc driver (https://www.cloudera.com -> Downloads -> Database Drivers)
