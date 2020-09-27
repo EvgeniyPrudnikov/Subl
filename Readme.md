@@ -25,7 +25,7 @@ pip install numpy pyodbc cx_Oracle
 For use with hive jdbc: 
 
 8) Install Java 8 (https://www.java.com/en/download/)
-9) Add sqlplus, python to Path env varaible
+9) Add JAVA_HOME to Path env varaible with path to installed java
 10) Download cloudera hive jdbc driver (https://www.cloudera.com -> Downloads -> Database Drivers)
 11) Add path to driver to c:~\AppData\Roaming\Sublime Text 3\Packages\User\JCSQL.sublime-settings in jvm_classpath
 11.1) If use kerberos add kerberos conf file path to JCSQL.sublime-settings in krb_conf_file_path
