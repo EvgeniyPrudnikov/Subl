@@ -2,6 +2,7 @@ import sublime
 import sublime_plugin
 import os
 import subprocess
+import shlex
 import threading
 import time
 import sys
@@ -95,6 +96,12 @@ class ExecQueryCommand(sublime_plugin.WindowCommand):
         elif tool == 'python':
             fetch_num = settings.get('fetch_num') if fetch is None else str(fetch)
             cmd = [tool, settings.get("client"), env, conn['connection_string'], tmp_file_name, qtype, fetch_num]
+        elif tool == 'java':
+            fetch_num = settings.get('fetch_num') if fetch is None else str(fetch)
+            jvm_args = '-DFile.Encoding=UTF-8 -Djavax.security.auth.useSubjectCredsOnly=false -Djava.security.krb5.conf="{0}" -classpath "{1}"'.format(settings.get('krb_conf_file_path'), settings.get('jvm_classpath'))
+            cmd = [tool, jvm_args, settings.get("client_java"), env, conn['connection_string'], '"' + tmp_file_name + '"', qtype, fetch_num]
+            cmd = shlex.split(' '.join(cmd))  # for correct split cmd
+            # print(cmd)
 
         self.exec_thread = ExecThread(cmd, output_view, tmp_file_name)
         self.exec_thread.daemon = True

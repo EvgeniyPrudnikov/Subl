@@ -69,8 +69,9 @@ def prepare_impala(query, qtype, is_query_dml):
 
     return tool, query, fetch
 
+
 def prepare_hive(query, qtype, is_query_dml):
-    tool = 'python'
+    tool = 'java'
     if qtype == 'explain':
         query = 'EXPLAIN\n {0}'.format(query)
         fetch = -1
@@ -78,6 +79,7 @@ def prepare_hive(query, qtype, is_query_dml):
         fetch = -1 if not is_query_dml else None
 
     return tool, query, fetch
+
 
 def prepare_query_file(view, env, qtype):
     sel_text = get_text(view)

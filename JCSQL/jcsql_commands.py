@@ -13,8 +13,11 @@ def plugin_loaded():
     settings = sublime.load_settings('JCSQL.sublime-settings')
     if not settings.get('client'):
         settings.set('client', os.path.join(sublime.packages_path(), 'JCSQL', 'client.py'))
+        settings.set('client_java', 'HiveJdbcClient')
         settings.set('pass', os.path.join(sublime.packages_path(), 'JCSQL', 'pass'))
         settings.set('fetch_num', '65')
+        settings.set('krb_conf_file_path', 'C:\\Program Files\\MIT\\Kerberos\\krb5.ini')
+        settings.set('jvm_classpath', os.path.join(sublime.packages_path(), 'JCSQL', 'HiveJdbcClient') + ';')
         sublime.save_settings('JCSQL.sublime-settings')
     conn_store = ConnectionStore(settings.get('pass'))
 
