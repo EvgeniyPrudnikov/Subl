@@ -28,7 +28,8 @@ def print_all(output):
 
 
 def cvs_print_result(output):
-    writer = csv.writer(sys.stdout, dialect='excel', delimiter=',', lineterminator='\n', quoting=csv.QUOTE_ALL, escapechar='\\')
+    writer = csv.writer(sys.stdout, dialect='excel', delimiter=',', lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC, escapechar='\\')
+    output = map(lambda x: map(lambda y: str(y).replace('\n', '\\n').replace('\r', '\\r'), x), output)
     writer.writerows(output)
     sys.stdout.flush()
 
