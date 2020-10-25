@@ -103,25 +103,24 @@ def fetch_data(cur, res, fetch_num, is_fetched_all_rows, with_header=False):
     return False
 
 
-def split_data(data):
+def split_data(data, sep=';', q="'\""):
     list_data = list(data)
-
-    pos = []
-    quote_started = False
+    split_pos = []
+    st = []
     for i, ch in enumerate(list_data):
-        if (ch == "'" or ch == '"') and not quote_started:
-            quote_started = True
+        if ch in q:
+            st.append(ch)
             continue
-        if ch == ';' and quote_started:
-            pos.append(i)
-        if (ch == "'" or ch == '"') and quote_started:
-            quote_started = False
+        if ch == sep and len(st) == 0:
+            split_pos.append(i)
+        if ch in q:
+            st.pop()
             continue
 
-    for m in pos:
-        list_data[m] = '[replace_me]'
-    new_data = ''.join(list_data).split(';')
-    return map(lambda x: x.replace('[replace_me]', ';'), new_data)
+    for m in split_pos:
+        list_data[m] = '[split_me]'
+
+    return ''.join(list_data).split('[split_me]')
 
 
 def read_input(msg_q):
