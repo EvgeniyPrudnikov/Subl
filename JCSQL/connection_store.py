@@ -11,7 +11,7 @@ class ConnectionStore(object):
     _template = """
 {
       "connection_name": "CONNECTION_NAME_HERE"
-    , "environment": "ENVIRONMENT_HERE(oracle/impala/hive)"
+    , "environment": "ENVIRONMENT_HERE(oracle/impala/hive/snowflake)"
     , "connection_string": "CONNECTION_STRING_HERE"
 }
 """
@@ -47,9 +47,12 @@ class ConnectionStore(object):
                 return
             conn = self.get_connection(conn_list[conn_name_idx])
 
+            if isinstance(conn['connection_string'], OrderedDict):
+                conn['connection_string'] = json.dumps(conn['connection_string'])
             w = sublime.active_window()
             w.show_input_panel('Modify Connection: ',
-                               self._template.replace("ENVIRONMENT_HERE(oracle/impala/hive)", conn['environment']).replace('CONNECTION_NAME_HERE', conn['connection_name']).replace('CONNECTION_STRING_HERE', conn['connection_string']),
+                               self._template.replace("ENVIRONMENT_HERE(oracle/impala/hive/snowflake)", conn['environment']).replace(
+                                   'CONNECTION_NAME_HERE', conn['connection_name']).replace('CONNECTION_STRING_HERE', conn['connection_string']),
                                self._on_add_modify_conn,
                                None,
                                self._on_cancel)

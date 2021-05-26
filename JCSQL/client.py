@@ -11,6 +11,8 @@ try:
     import numpy as np
     import pyodbc
     import cx_Oracle as cx
+    import snowflake.connector
+    import json
 except Exception as e:
     print(e)
 
@@ -28,7 +30,8 @@ def print_all(output):
 
 
 def cvs_print_result(output):
-    writer = csv.writer(sys.stdout, dialect='excel', delimiter=',', lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC, escapechar='\\')
+    writer = csv.writer(sys.stdout, dialect='excel', delimiter=',', lineterminator='\n',
+                        quoting=csv.QUOTE_NONNUMERIC, escapechar='\\')
     output = map(lambda x: map(lambda y: str(y).replace('\n', '\\n').replace('\r', '\\r'), x), output)
     writer.writerows(output)
     sys.stdout.flush()
@@ -49,13 +52,15 @@ def pretty_print_result(output):
     def proc_line_end(val, index):
         blob_list = str(val).replace('\r', '').split('\n')
         sm = np.sum(max_col_length[:index]) + 3 * index + 2
-        res = [(' ' * (sm - 2) + '. ' if i > 0 else '') + str(value).replace('None', 'NULL') + ' ' * (max_col_length[index] - len(value)) + (' .' if i != len(blob_list) - 1 else '') for i, value in enumerate(blob_list)]
+        res = [(' ' * (sm - 2) + '. ' if i > 0 else '') + str(value).replace('None', 'NULL') + ' ' *
+               (max_col_length[index] - len(value)) + (' .' if i != len(blob_list) - 1 else '') for i, value in enumerate(blob_list)]
         return '\n'.join(res)
 
     # print result
     print('+' + ''.join(['-' * x + '--+' for x in max_col_length]))
     for row_index, row in enumerate(l_output):
-        print('|' + ''.join([' ' + ((str(value).replace('None', 'NULL').replace('\r', '') + ' ' * (max_col_length[index] - len(str(value).replace('\r', '')))) if '\n' not in str(value) else proc_line_end(value, index)) + ' |' for index, value in enumerate(row)]))
+        print('|' + ''.join([' ' + ((str(value).replace('None', 'NULL').replace('\r', '') + ' ' * (max_col_length[index] - len(str(
+            value).replace('\r', '')))) if '\n' not in str(value) else proc_line_end(value, index)) + ' |' for index, value in enumerate(row)]))
         if row_index == 0 or row_index == len(l_output) - 1:
             print('+' + ''.join(['-' * x + '--+' for x in max_col_length]))
 
@@ -67,8 +72,19 @@ def connect_to_db(conn_str, env):
     for _ in range(50):  # 50 attempts
         if env == 'oracle':
             db = cx.connect(conn_str, encoding='utf-8')
-        else:
+        elif env == 'impala':
             db = pyodbc.connect(conn_str, autocommit=True, timeout=0)
+        elif env == 'snowflake':
+            conn = json.loads(conn_str.replace("'", '"'))
+            db = snowflake.connector.connect(
+                user=conn.get('sf_user'),
+                password=conn.get('sf_password'),
+                account=conn.get('account'),
+                warehouse=conn.get('sf_warehouse'),
+                role=conn.get('sf_role'),
+                database=conn.get('sf_db'),
+                schema=conn.get('sf_schema')
+            )
         if db:
             break
     if not db:
@@ -76,6 +92,38 @@ def connect_to_db(conn_str, env):
         os._exit(1)
     PRINT_HEADER.append('\n[{0}] Connected to {1}\n'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), env))
     return db
+
+
+def get_cur_header(cur_desc):
+    res = []
+    for i in cur_desc:
+        col_name = i[0]
+        if SCRIPT_ENV == 'oracle':
+            data_type = re.search(r'<cx_Oracle\.DbType DB_TYPE_(.*)>', str(i[1])).group(1).lower()
+        elif SCRIPT_ENV == 'impala':
+            data_type = re.search(r"<class '(.*)'>", str(i[1])).group(1).lower()
+        elif SCRIPT_ENV == 'snowflake':
+            sf_types_map = {
+                0: 'number',
+                1: 'real',
+                2: 'string',
+                3: 'date',
+                4: 'timestamp',
+                5: 'variant',
+                6: 'timestamp_ltz',
+                7: 'timestamp_tz',
+                8: 'timestamp_tz',
+                9: 'object',
+                10: 'array',
+                11: 'binary',
+                12: 'time',
+                13: 'boolean'
+            }
+            data_type = sf_types_map[i[1]]
+        else:
+            raise Exception('Wrong environment!')
+        res.append('{0}({1})'.format(col_name, data_type))
+    return tuple(res)
 
 
 def fetch_data(cur, res, fetch_num, is_fetched_all_rows, with_header=False):
@@ -87,7 +135,7 @@ def fetch_data(cur, res, fetch_num, is_fetched_all_rows, with_header=False):
         return True
 
     if with_header:
-        headers = tuple([i[0].lower() for i in cur.description])
+        headers = get_cur_header(cur.description)
         res.append(headers)
 
     if fetch_num == -1:
@@ -103,24 +151,25 @@ def fetch_data(cur, res, fetch_num, is_fetched_all_rows, with_header=False):
     return False
 
 
-def split_data(data, sep=';', q="'\""):
-    list_data = list(data)
-    split_pos = []
-    st = []
+def split_data(data):
+    list_data = list(data.replace(r"\'", '[replace_me]'))
+
+    pos = []
+    quote_started = False
     for i, ch in enumerate(list_data):
-        if ch in q:
-            st.append(ch)
+        if ch == "'" and not quote_started:
+            quote_started = True
             continue
-        if ch == sep and len(st) == 0:
-            split_pos.append(i)
-        if ch in q:
-            st.pop()
+        if ch == ';' and not quote_started:
+            pos.append(i)
+        if ch == "'" and quote_started:
+            quote_started = False
             continue
 
-    for m in split_pos:
+    for m in pos:
         list_data[m] = '[split_me]'
-
-    return ''.join(list_data).split('[split_me]')
+    new_data = ''.join(list_data).split('[split_me]')
+    return map(lambda x: x.replace('[replace_me]', r'\''), new_data)
 
 
 def read_input(msg_q):
@@ -128,11 +177,15 @@ def read_input(msg_q):
         msg_q.append(sys.stdin.readline())
 
 
+SCRIPT_ENV = None
+
 def main():
 
     os.environ['PYTHONIOENCODING'] = 'utf-8'
 
     env = sys.argv[1]
+    global SCRIPT_ENV
+    SCRIPT_ENV = env
     conn_str = sys.argv[2]
     query_file_name = sys.argv[3]
     # qtype = sys.argv[4]
@@ -211,6 +264,10 @@ def main():
         print(e_msg)
     except pyodbc.Error as pyodbc_error:
         e_msg = '\n{0}\n'.format(pyodbc_error.args[1])
+        print(*PRINT_HEADER, sep='\n', flush=True)
+        print(e_msg)
+    except snowflake.connector.errors.ProgrammingError as sf_error:
+        e_msg = '\nsnowflake.connector.errors.ProgrammingError - {0}\n'.format(sf_error)
         print(*PRINT_HEADER, sep='\n', flush=True)
         print(e_msg)
     except Exception:

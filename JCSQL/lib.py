@@ -69,6 +69,16 @@ def prepare_impala(query, qtype, is_query_dml):
 
     return tool, query, fetch
 
+def prepare_snowflake(query, qtype, is_query_dml):
+    tool = 'python'
+    if qtype == 'explain':
+        query = 'EXPLAIN\n {0}'.format(query)
+        fetch = -1
+    else:
+        fetch = -1 if not is_query_dml else None
+
+    return tool, query, fetch
+
 
 def prepare_hive(query, qtype, is_query_dml):
     tool = 'java'
@@ -95,6 +105,8 @@ def prepare_query_file(view, env, qtype):
         tool, cl_query, fetch = prepare_impala(sel_text, qtype, is_query_dml)
     elif env == 'hive':
         tool, cl_query, fetch = prepare_hive(sel_text, qtype, is_query_dml)
+    elif env == 'snowflake':
+        tool, cl_query, fetch = prepare_snowflake(sel_text, qtype, is_query_dml)
     else:
         return
 

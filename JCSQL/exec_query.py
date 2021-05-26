@@ -84,7 +84,6 @@ class ExecQueryCommand(sublime_plugin.WindowCommand):
         env = conn['environment']
         tool, tmp_file_name, fetch = prepare_query_file(self.window.active_view(), env, qtype) or (None, None, None)
         if tool is None:
-            print('Connection environment {0} is not supported. Allowed values are: ("impala", "hive", "oracle"). exit.'.format(env))
             return
 
         output_view_name = '{0}_{1}'.format(conn['connection_name'], env)
@@ -95,7 +94,7 @@ class ExecQueryCommand(sublime_plugin.WindowCommand):
             cmd = [tool, '-L', conn['connection_string'], '@', tmp_file_name]
         elif tool == 'python':
             fetch_num = settings.get('fetch_num') if fetch is None else str(fetch)
-            cmd = [tool, settings.get("client"), env, conn['connection_string'], tmp_file_name, qtype, fetch_num]
+            cmd = [tool, settings.get("client"), env, str(conn['connection_string']), tmp_file_name, qtype, fetch_num]
         elif tool == 'java':
             fetch_num = settings.get('fetch_num') if fetch is None else str(fetch)
             jvm_args = '-DFile.Encoding=UTF-8 -Djavax.security.auth.useSubjectCredsOnly=false -Djava.security.krb5.conf="{0}" -classpath "{1}"'.format(settings.get('krb_conf_file_path'), settings.get('jvm_classpath'))
@@ -214,7 +213,7 @@ class ExecThread(threading.Thread):
         self.view.run_command('append', {'characters': data})
         self.view.set_read_only(True)
 
-        errors_start_text = ['ORA-', 'SP2-', 'PL/SQL:', 'ERROR', 'PLS-']
+        errors_start_text = {'ORA-', 'SP2-', 'PL/SQL:', 'ERROR', 'PLS-', 'snowflake.connector.errors'}
         odbc_err_text = '[Cloudera]'
         if any(map(data.startswith, errors_start_text)) or odbc_err_text in data:
             self.view.sel().add(self.view.line(sublime.Region(self.view.size() - len(data), self.view.size())))
