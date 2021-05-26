@@ -5,6 +5,7 @@ Now available:
  - Oracle DB
  - Cloudera Impala
  - Cloudera HIVE via JDBC
+ - Snowflake
 ## Install:
 
 0) Install Sublime tetxt
