@@ -97,7 +97,7 @@ def connect_to_db(conn_str, env):
 def get_cur_header(cur_desc):
     res = []
     for i in cur_desc:
-        col_name = i[0]
+        col_name = i[0].lower()
         if SCRIPT_ENV == 'oracle':
             data_type = re.search(r'<cx_Oracle\.DbType DB_TYPE_(.*)>', str(i[1])).group(1).lower()
         elif SCRIPT_ENV == 'impala':
