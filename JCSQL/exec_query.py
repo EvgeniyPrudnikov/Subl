@@ -226,6 +226,8 @@ class ExecThread(threading.Thread):
 
     def check_view_proc(self, view, popen):
         while True:
+            if popen.poll() is not None:
+                sys.exit(0)
             if not view.name():
                 popen.terminate()
                 sys.exit(0)
