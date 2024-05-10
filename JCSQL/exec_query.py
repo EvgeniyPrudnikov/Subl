@@ -17,6 +17,8 @@ kernel32 = None
 user32 = None
 HWND = None
 
+def flash_start_icon(count=2):
+    pass
 
 if os.name == 'nt':
     import ctypes
